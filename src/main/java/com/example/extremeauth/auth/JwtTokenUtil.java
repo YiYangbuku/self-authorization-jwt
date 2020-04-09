@@ -1,6 +1,8 @@
 package com.example.extremeauth.auth;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.function.Function;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -21,6 +24,9 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -2550185165626007488L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     private static ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    private PermissionDictionary permissionDictionary;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -48,6 +54,8 @@ public class JwtTokenUtil implements Serializable {
     //generate token for user
     public JwtResponse generateToken(UserDetails userDetails) throws JsonProcessingException {
         Map<String, Object> claims = new HashMap<>();
+
+        claims.put("per", permissionDictionary.getAllowedApis(userDetails.getUsername()));
         return doGenerateToken(claims, userDetails.getUsername());
     }
     //while creating the token -
