@@ -58,7 +58,7 @@ public class JwtTokenUtil implements Serializable {
     private JwtResponse doGenerateToken(Map<String, Object> claims, String subject) throws JsonProcessingException {
         JwtBuilder jwtBuilder = Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret);
+                .signWith(SignatureAlgorithm.HS512, secret.getBytes());
         return new JwtResponse(jwtBuilder.compact());
     }
     //validate token
